@@ -1,4 +1,5 @@
 from time import sleep
+
 from helpers.window_helper import WindowHelper
 
 class InputHandler():
@@ -16,11 +17,18 @@ class InputHandler():
             WindowHelper().hide_cli()
         elif input_value == "clear":
             print("Clearing console window...")
-            pass
+            WindowHelper().clear()
             print("Console window cleared!")
-        elif input_value == "exit" or input_value == "stop":
-            print("Method to stop the program isn't yet implemented!")
+        elif input_value == "stop" or input_value == "exit":
+            print("Method to exit the program isn't yet implemented!")
             pass
+        elif input_value == "logs":
+            self.main.logging = not self.main.logging
+            print("Toggled logging to " + str(self.main.logging) + "!")
+        elif input_value == "plugins":
+            print("Printing " + str(len(self.plugin_helper.plugin_list)) + " installed plugins:")
+            for plugin in self.plugin_helper.plugin_list:
+                print(plugin.inst.get_modulename())
         elif len(input_value.split(" ")) > 1:
             self.plugin_helper.execute(input_value)
         else:
@@ -30,10 +38,21 @@ class InputHandler():
     def _get_helptext(main):
         helptext = ""
 
-        helptext += "Showing help for the average_active_time module:\n"
+        helptext += " =============== start of the helptext =============== \n"
+        helptext += "Showing help for the core module:\n"
+        helptext += " --------------- main commands   --------------- \n"
         helptext += "help --> Shows this helptext\n"
         helptext += "hide --> Hides the cli\n"
         helptext += "clear --> Clears the console window\n"
-        helptext += "logs --> Enables/disables logging (current: " + str(main.logging) + ")"
+        helptext += "stop --> Exits the cli\n"
+        helptext += "exit --> Exits the cli\n"
+        helptext += " --------------- main options    --------------- \n"
+        helptext += "logs --> Enables/disables logging (current: " + str(main.logging) + ")\n"
+        helptext += " --------------- debug commands  --------------- \n"
+        helptext += "plugins --> Shows all loaded plugins\n"
+        helptext += " --------------- plugin commands --------------- \n"
+        helptext += "[plugin_name] help --> Shows a helptext for the given plugin\n"
+        helptext += "[plugin_name] [command] --> Executes the command from the given plugin\n"
+        helptext += " =============== end of the helptext     =============== "
 
         return helptext

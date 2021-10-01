@@ -1,3 +1,5 @@
+from os import system, name
+
 from ctypes import windll, WinDLL
 
 class WindowHelper():
@@ -13,5 +15,12 @@ class WindowHelper():
         self.user32.ShowWindow(hWnd, self.SW_HIDE)
 
     @classmethod
-    def get_console_hWnd(self):
+    def clear(cls):
+        if name == "nt":
+            _ = system("cls")
+        else:
+            _ = system("clear")
+
+    @classmethod
+    def get_console_hWnd(cls):
         return windll.kernel32.GetConsoleWindow()
