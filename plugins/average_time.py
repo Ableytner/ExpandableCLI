@@ -1,6 +1,8 @@
 from datetime import datetime
-from threading import Thread
+from time import sleep
+
 from plugins.info_module_base import InfoModuleBase
+from plugins.better_thread import BetterThread
 
 class AverageTime(InfoModuleBase):
     def __init__(self) -> None:
@@ -19,7 +21,6 @@ class AverageTime(InfoModuleBase):
         helptext += "average --> Calculates the average active time\n"
         helptext += "today --> Calculates the total time today"
 
-        print(helptext)
         return helptext
 
     def get_info_raw(self):
@@ -28,7 +29,6 @@ class AverageTime(InfoModuleBase):
         helptext += "average\n"
         helptext += "today"
 
-        print(helptext)
         return helptext
 
     def start(self):
@@ -42,6 +42,11 @@ class AverageTime(InfoModuleBase):
         else:
             print("Unknown command " + command + "!")
 
+    def exit(self):
+        print("Waiting for update_thread to exit...")
+        self.update_thread.exit()
+        print("update_thread gracefully stopped")
+
     def _calculate_average(self):
         print("calculate_average isn't yet implemented!")
 
@@ -49,7 +54,7 @@ class AverageTime(InfoModuleBase):
         print("calculate_today isn't yet implemented!")
 
     def _start(self):
-        self.update_thread = Thread(target=self.update_function)
+        self.update_thread = BetterThread(target=self.update_controller)
 
         timeNow = datetime.now()
 
@@ -61,7 +66,14 @@ class AverageTime(InfoModuleBase):
 
         self.update_thread.start()
 
-    def update(self):
+    def update_controller(self):
+        while True:
+            if self.update_thread.stopped():
+                return
+            self.update_function()
+            sleep(5)
+
+    def update_function(self):
         timeNow = datetime.now()
 
         with open("D:\AverageActiveTime\logfile.txt", "r") as logfile:

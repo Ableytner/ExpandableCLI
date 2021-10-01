@@ -15,6 +15,7 @@ class Plugin:
     get_info_raw: MethodType
     start: MethodType
     execute: MethodType
+    exit: MethodType
 
 class PluginHelper():
     def __init__(self) -> None:
@@ -37,10 +38,10 @@ class PluginHelper():
 
     def start_plugins(self):
         for plugin in self.plugin_list:
-            plugin["start"](plugin["inst"])
+            plugin.inst.start()
 
     def _load(self, plugin_class: InfoModuleBase):
-        plugin = Plugin(plugin_class(), plugin_class.get_modulename, plugin_class.depends_on, plugin_class.get_info, plugin_class.get_info_raw, plugin_class.start, plugin_class.execute)
+        plugin = Plugin(plugin_class(), plugin_class.get_modulename, plugin_class.depends_on, plugin_class.get_info, plugin_class.get_info_raw, plugin_class.start, plugin_class.execute, plugin_class.exit)
         self.plugin_list.append(plugin)
 
     def execute(self, command):
@@ -58,3 +59,7 @@ class PluginHelper():
 
         print("Plugin " + modulename + " can't be found!")
         return None
+
+    def exit_plugins(self):
+        for plugin in self.plugin_list:
+            print(plugin.inst.exit())

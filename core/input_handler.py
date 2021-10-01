@@ -20,8 +20,9 @@ class InputHandler():
             WindowHelper().clear()
             print("Console window cleared!")
         elif input_value == "stop" or input_value == "exit":
-            print("Method to exit the program isn't yet implemented!")
-            pass
+            print("Exiting program...")
+            self.plugin_helper.exit_plugins()
+            exit()
         elif input_value == "logs":
             self.main.logging = not self.main.logging
             print("Toggled logging to " + str(self.main.logging) + "!")
@@ -30,7 +31,7 @@ class InputHandler():
             for plugin in self.plugin_helper.plugin_list:
                 print(plugin.inst.get_modulename())
         elif len(input_value.split(" ")) > 1:
-            self.plugin_helper.execute(input_value)
+            print(self.plugin_helper.execute(input_value))
         else:
             print("Unknown command " + input_value + "!")
 

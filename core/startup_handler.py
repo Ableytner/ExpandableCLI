@@ -23,6 +23,7 @@ class StartupHandler():
     def load_plugins(self):
         self.plugin_helper.load_plugins()
         self.plugin_helper.check_comp()
+        self.plugin_helper.start_plugins()
 
     def _program_is_running(self):
         if path.exists(self.cache_dir + "pidfile.txt"):

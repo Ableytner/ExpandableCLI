@@ -24,3 +24,7 @@ class InfoModuleBase(ABC):
     @abstractmethod
     def execute(self, command):
         pass
+
+    @abstractmethod
+    def exit(self):
+        pass

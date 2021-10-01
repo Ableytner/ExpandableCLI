@@ -1,4 +1,3 @@
-from time import sleep
 from threading import Thread, Event
 
 from plugins.info_module_base import InfoModuleBase
@@ -26,13 +25,8 @@ class BetterThread(Thread, InfoModuleBase):
     def execute(self, command):
         return super().execute(command)
 
-    def stop(self):
-        self._stop.set()
+    def exit(self):
+        return self._stop.set()
 
     def stopped(self):
         return self._stop.isSet()
-
-    def update_function(self):
-        while True:
-            self.update()
-            sleep(5)
