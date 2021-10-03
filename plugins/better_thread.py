@@ -7,7 +7,7 @@ class BetterThread(Thread, InfoModuleBase):
         self._stop = Event()
         super(BetterThread, self).__init__(*args, **kwargs)
 
-    def get_modulename(self):
+    def get_pluginname(self):
         return "better_thread"
 
     def get_info(self):

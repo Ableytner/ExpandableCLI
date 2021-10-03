@@ -2,7 +2,7 @@ from abc import ABC, abstractmethod
 
 class InfoModuleBase(ABC):
     @abstractmethod
-    def get_modulename(self):
+    def get_pluginname(self):
         pass
 
     def depends_on(self):

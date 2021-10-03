@@ -8,7 +8,7 @@ class AverageTime(InfoModuleBase):
     def __init__(self) -> None:
         self.update_thread = None
 
-    def get_modulename(self):
+    def get_pluginname(self):
         return "average_time"
 
     def depends_on(self):
@@ -20,7 +20,7 @@ class AverageTime(InfoModuleBase):
     def get_info(self):
         helptext = ""
 
-        helptext += "Showing help for the average_time module:\n"
+        helptext += "Showing help for the average_time plugin:\n"
         helptext += "average --> Calculates the average active time\n"
         helptext += "today --> Calculates the total time today"
 

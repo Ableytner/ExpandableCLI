@@ -29,7 +29,7 @@ class InputHandler():
         elif input_value == "plugins":
             print("Printing " + str(len(self.plugin_helper.plugin_list)) + " installed plugins:")
             for plugin in self.plugin_helper.plugin_list:
-                print(plugin.inst.get_modulename())
+                print(plugin.inst.get_pluginname())
         elif len(input_value.split(" ")) > 1:
             print(self.plugin_helper.execute(input_value))
         else:

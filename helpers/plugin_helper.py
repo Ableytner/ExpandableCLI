@@ -9,7 +9,7 @@ from plugins.average_time import AverageTime
 @dataclass
 class Plugin:
     inst: InfoModuleBase
-    get_modulename: MethodType
+    get_pluginname: MethodType
     get_info: MethodType
     start: MethodType
     execute: MethodType
@@ -30,15 +30,19 @@ class PluginHelper():
         for plugin in self.plugin_list:
             plugin.inst.start()
 
+    def exit_plugins(self):
+        for plugin in self.plugin_list:
+            print(plugin.inst.exit())
+
     def check_comp(self):
         for plugin_to_check in self.plugin_list:
             for counter, item in enumerate(plugin_to_check.inst.depends_on()):
                 compatable = False
                 for plugin_to_check_with in self.plugin_list:
-                    if plugin_to_check_with.inst.get_modulename() == item:
+                    if plugin_to_check_with.inst.get_pluginname() == item:
                         compatable = True
                 if not compatable:
-                    print("Critical error: Plugin " + plugin_to_check.inst.get_modulename() + " depends on plugins " + str(plugin_to_check.inst.depends_on()) + "!")
+                    print("Critical error: Plugin " + plugin_to_check.inst.get_pluginname() + " depends on plugins " + str(plugin_to_check.inst.depends_on()) + "!")
                     exit()
 
     def needs_startup(self):
@@ -53,25 +57,21 @@ class PluginHelper():
                 plugin.inst.start()
 
     def _init(self, plugin_class: InfoModuleBase):
-        plugin = Plugin(plugin_class(), plugin_class.get_modulename, plugin_class.depends_on, plugin_class.get_info, plugin_class.start, plugin_class.execute, plugin_class.exit, plugin_class.needs_startup)
+        plugin = Plugin(plugin_class(), plugin_class.get_pluginname, plugin_class.depends_on, plugin_class.get_info, plugin_class.start, plugin_class.execute, plugin_class.exit, plugin_class.needs_startup)
         self.plugin_list.append(plugin)
 
     def execute(self, command):
-        modulename = command.split(" ")[0]
+        pluginname = command.split(" ")[0]
 
         if command.split(" ")[1] == "help":
             for plugin in self.plugin_list:
-                if plugin.inst.get_modulename() == modulename:
+                if plugin.inst.get_pluginname() == pluginname:
                     return plugin.inst.get_info()
             return None
 
         for plugin in self.plugin_list:
-            if plugin.inst.get_modulename() == modulename:
+            if plugin.inst.get_pluginname() == pluginname:
                 return plugin.inst.execute(command.split(" ")[1])
 
-        print("Plugin " + modulename + " can't be found!")
+        print("Plugin " + pluginname + " can't be found!")
         return None
-
-    def exit_plugins(self):
-        for plugin in self.plugin_list:
-            print(plugin.inst.exit())
