@@ -4,20 +4,14 @@ from plugins.info_module_base import InfoModuleBase
 
 class BetterThread(Thread, InfoModuleBase):
     def __init__(self, *args, **kwargs):
-        super(BetterThread, self).__init__(*args, **kwargs)
         self._stop = Event()
+        super(BetterThread, self).__init__(*args, **kwargs)
 
     def get_modulename(self):
         return "better_thread"
 
-    def depends_on(self):
-        return []
-
     def get_info(self):
         return super().get_info()
-
-    def get_info_raw(self):
-        return super().get_info_raw()
 
     def start(self) -> None:
         return super().start()

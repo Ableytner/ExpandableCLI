@@ -14,20 +14,15 @@ class AverageTime(InfoModuleBase):
     def depends_on(self):
         return ["better_thread"]
 
+    def needs_startup(self):
+        return True
+
     def get_info(self):
         helptext = ""
 
         helptext += "Showing help for the average_time module:\n"
         helptext += "average --> Calculates the average active time\n"
         helptext += "today --> Calculates the total time today"
-
-        return helptext
-
-    def get_info_raw(self):
-        helptext = ""
-
-        helptext += "average\n"
-        helptext += "today"
 
         return helptext
 

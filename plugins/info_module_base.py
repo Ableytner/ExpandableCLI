@@ -5,16 +5,14 @@ class InfoModuleBase(ABC):
     def get_modulename(self):
         pass
 
-    @abstractmethod
     def depends_on(self):
-        pass
+        return []
+
+    def needs_startup(self):
+        return False
 
     @abstractmethod
     def get_info(self):
-        pass
-
-    @abstractmethod
-    def get_info_raw(self):
         pass
 
     @abstractmethod
@@ -25,6 +23,5 @@ class InfoModuleBase(ABC):
     def execute(self, command):
         pass
 
-    @abstractmethod
     def exit(self):
         pass

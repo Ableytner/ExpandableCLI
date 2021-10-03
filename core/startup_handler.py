@@ -21,7 +21,7 @@ class StartupHandler():
         return True
 
     def load_plugins(self):
-        self.plugin_helper.load_plugins()
+        self.plugin_helper.init_plugins()
         self.plugin_helper.check_comp()
         self.plugin_helper.start_plugins()
 

@@ -10,20 +10,25 @@ from plugins.average_time import AverageTime
 class Plugin:
     inst: InfoModuleBase
     get_modulename: MethodType
-    depends_on: MethodType
     get_info: MethodType
-    get_info_raw: MethodType
     start: MethodType
     execute: MethodType
     exit: MethodType
+    depends_on: MethodType
+    needs_startup: MethodType
 
 class PluginHelper():
     def __init__(self) -> None:
+        self.plugins = [BetterThread, AverageTime]
         self.plugin_list: List[Plugin] = []
 
-    def load_plugins(self):
-        self._load(BetterThread)
-        self._load(AverageTime)
+    def init_plugins(self):
+        for plugin in self.plugins:
+            self._init(plugin)
+
+    def start_plugins(self):
+        for plugin in self.plugin_list:
+            plugin.inst.start()
 
     def check_comp(self):
         for plugin_to_check in self.plugin_list:
@@ -36,12 +41,19 @@ class PluginHelper():
                     print("Critical error: Plugin " + plugin_to_check.inst.get_modulename() + " depends on plugins " + str(plugin_to_check.inst.depends_on()) + "!")
                     exit()
 
-    def start_plugins(self):
+    def needs_startup(self):
         for plugin in self.plugin_list:
-            plugin.inst.start()
+            if plugin.needs_startup:
+                return True
+        return False
 
-    def _load(self, plugin_class: InfoModuleBase):
-        plugin = Plugin(plugin_class(), plugin_class.get_modulename, plugin_class.depends_on, plugin_class.get_info, plugin_class.get_info_raw, plugin_class.start, plugin_class.execute, plugin_class.exit)
+    def start_startup_plugins(self):
+        for plugin in self.plugin_list:
+            if plugin.needs_startup:
+                plugin.inst.start()
+
+    def _init(self, plugin_class: InfoModuleBase):
+        plugin = Plugin(plugin_class(), plugin_class.get_modulename, plugin_class.depends_on, plugin_class.get_info, plugin_class.start, plugin_class.execute, plugin_class.exit, plugin_class.needs_startup)
         self.plugin_list.append(plugin)
 
     def execute(self, command):
