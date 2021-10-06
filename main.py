@@ -1,16 +1,14 @@
 from time import sleep
 from threading import Thread
 
-from core.startup_handler import StartupHandler
 from helpers.plugin_helper import PluginHelper
 from helpers.window_helper import WindowHelper
 from helpers.cli_helper import CLIHelper
 
 class Main():
     def __init__(self, log_dir = "D:\AverageActiveTime\\", cache_dir = "D:\AverageActiveTime\\") -> None:
-        self.window_helper = WindowHelper()
+        self.window_helper = WindowHelper(cache_dir)
         self.plugin_helper = PluginHelper()
-        self.start_handler = StartupHandler(cache_dir)
         self.cli_helper = CLIHelper(self)
 
         self.logging = True
@@ -21,7 +19,7 @@ class Main():
         self.cli_thread = None
 
     def main(self):
-        if not self.start_handler.main():
+        if not self.window_helper.background_program_running():
             print("Running instance detected, exiting...")
             sleep(3)
             exit()
