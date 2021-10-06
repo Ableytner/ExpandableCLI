@@ -1,19 +1,18 @@
 from time import sleep
 from threading import Thread
-from core.input_handler import InputHandler
-from helpers.plugin_helper import PluginHelper
 
 from core.startup_handler import StartupHandler
+from helpers.plugin_helper import PluginHelper
 from helpers.window_helper import WindowHelper
+from helpers.cli_helper import CLIHelper
 
 class Main():
     def __init__(self, log_dir = "D:\AverageActiveTime\\", cache_dir = "D:\AverageActiveTime\\") -> None:
         self.window_helper = WindowHelper()
         self.plugin_helper = PluginHelper()
-        self.start_handler = StartupHandler(cache_dir, self.plugin_helper)
-        self.input_handler = InputHandler(self)
+        self.start_handler = StartupHandler(cache_dir)
+        self.cli_helper = CLIHelper(self)
 
-        self.exit = False
         self.logging = True
 
         self.cache_dir = cache_dir
@@ -22,22 +21,16 @@ class Main():
         self.cli_thread = None
 
     def main(self):
-        self.cli_thread = Thread(target=self.cli_function)
-
         if not self.start_handler.main():
             print("Running instance detected, exiting...")
             sleep(3)
             exit()
 
-        self.start_handler.load_plugins()
+        self.plugin_helper.init_plugins()
+        self.plugin_helper.check_comp()
+        self.plugin_helper.start_plugins()
 
-        self.cli_thread.start()
-        Thread.join(self.cli_thread)
-
-    def cli_function(self):
-        while not self.exit:
-            input_value = input("> ")
-            self.input_handler.handle_input(input_value)
+        self.cli_helper.start()
 
     def format_to_seconds(self, time):
         return float(time[0]) * 3600 + float(time[1]) * 60 + float(time[2])

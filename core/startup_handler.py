@@ -2,14 +2,12 @@ from os import path
 import psutil
 
 from helpers.window_helper import WindowHelper
-from helpers.plugin_helper import PluginHelper
 
 class StartupHandler():
-    def __init__(self, cache_dir, plugin_helper) -> None:
+    def __init__(self, cache_dir) -> None:
         self.cache_dir = cache_dir
-        self.plugin_helper = plugin_helper
         self.window_helper = WindowHelper()
-    
+
     def main(self):
         if self._program_is_running():
             with open(self.cache_dir + "hWndfile.txt", "r+") as hWndfile:
@@ -19,11 +17,6 @@ class StartupHandler():
 
         self._save_new_values()
         return True
-
-    def load_plugins(self):
-        self.plugin_helper.init_plugins()
-        self.plugin_helper.check_comp()
-        self.plugin_helper.start_plugins()
 
     def _program_is_running(self):
         if path.exists(self.cache_dir + "pidfile.txt"):

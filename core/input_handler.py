@@ -4,9 +4,8 @@ from helpers.window_helper import WindowHelper
 
 class InputHandler():
     def __init__(self, main) -> None:
-        self.plugin_helper = main.plugin_helper
-
         self.main = main
+        self.plugin_helper = main.plugin_helper
 
     def handle_input(self, input_value):
         if input_value == "help":

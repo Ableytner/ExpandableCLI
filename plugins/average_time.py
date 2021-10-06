@@ -27,7 +27,18 @@ class AverageTime(InfoModuleBase):
         return helptext
 
     def start(self):
-        self._start()
+        self.update_thread = BetterThread(target=self.update_controller)
+
+        timeNow = datetime.now()
+
+        with open("D:\AverageActiveTime\logfile.txt", "a+") as logfile:
+            log_text = []
+            log_text.append("[" + str(timeNow).split(" ")[0] + "|STARTUP] " + str(timeNow).split(" ")[1] + "\n")
+            log_text.append("[" + str(timeNow).split(" ")[0] + "|SHUTOFF] " + str(timeNow).split(" ")[1] + "\n")
+            logfile.writelines(log_text)
+
+        self.update_thread.start()
+
 
     def execute(self, command):
         if command == "average":
@@ -47,19 +58,6 @@ class AverageTime(InfoModuleBase):
 
     def _calculate_today(self):
         print("calculate_today isn't yet implemented!")
-
-    def _start(self):
-        self.update_thread = BetterThread(target=self.update_controller)
-
-        timeNow = datetime.now()
-
-        with open("D:\AverageActiveTime\logfile.txt", "a+") as logfile:
-            log_text = []
-            log_text.append("[" + str(timeNow).split(" ")[0] + "|STARTUP] " + str(timeNow).split(" ")[1] + "\n")
-            log_text.append("[" + str(timeNow).split(" ")[0] + "|SHUTOFF] " + str(timeNow).split(" ")[1] + "\n")
-            logfile.writelines(log_text)
-
-        self.update_thread.start()
 
     def update_controller(self):
         while True:
