@@ -54,4 +54,3 @@ class WindowHelper():
             for p in psutil.process_iter():
                 if "cmd.exe" == p.name():
                     pidfile.write(str(p.pid))
-

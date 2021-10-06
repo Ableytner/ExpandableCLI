@@ -30,8 +30,12 @@ class InputHandler():
             for plugin in self.plugin_helper.plugin_list:
                 print(plugin.inst.get_pluginname())
         elif len(input_value.split(" ")) > 1:
-            print(self.plugin_helper.execute(input_value))
+            self.plugin_helper.execute(input_value)
         else:
+            for plugin in self.plugin_helper.plugin_list:
+                if input_value == plugin.inst.get_pluginname():
+                    print(plugin.inst.get_info())
+                    return
             print("Unknown command " + input_value + "!")
 
     @staticmethod

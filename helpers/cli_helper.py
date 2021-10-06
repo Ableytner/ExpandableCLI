@@ -18,4 +18,4 @@ class CLIHelper():
     def cli_function(self):
         while not self.exit:
             input_value = input("> ")
-            self.input_handler.handle_input(input_value)
+            self.input_handler.handle_input(input_value.strip(" "))

@@ -32,7 +32,7 @@ class PluginHelper():
 
     def exit_plugins(self):
         for plugin in self.plugin_list:
-            print(plugin.inst.exit())
+            plugin.inst.exit()
 
     def check_comp(self):
         for plugin_to_check in self.plugin_list:
