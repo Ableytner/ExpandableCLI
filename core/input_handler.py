@@ -1,15 +1,16 @@
+import os
 from time import sleep
 
+import helpers.config_helper as config_helper
 from helpers.window_helper import WindowHelper
 
 class InputHandler():
-    def __init__(self, main) -> None:
-        self.main = main
-        self.plugin_helper = main.plugin_helper
+    def __init__(self, plugin_helper) -> None:
+        self.plugin_helper = plugin_helper
 
     def handle_input(self, input_value):
         if input_value == "help":
-            print(self._get_helptext(self.main))
+            print(self._get_helptext())
         elif input_value == "hide":
             print("Hiding...")
             sleep(3)
@@ -23,12 +24,27 @@ class InputHandler():
             self.plugin_helper.exit_plugins()
             exit()
         elif input_value == "logs":
-            self.main.logging = not self.main.logging
-            print("Toggled logging to " + str(self.main.logging) + "!")
+            try:
+                logging_state = config_helper.get_setting("logging")
+                if logging_state == True or logging_state == False:
+                    config_helper.save_setting("logging", not logging_state)
+            except Exception as e:
+                print("An error occured during reading the config: ", e)
+            finally:
+                print("Toggled logging to " + str(config_helper.get_setting("logging")) + "!")
         elif input_value == "plugins":
             print("Printing " + str(len(self.plugin_helper.plugin_list)) + " installed plugins:")
             for plugin in self.plugin_helper.plugin_list:
                 print(plugin.inst.get_pluginname())
+        elif input_value == "test":
+            print("Test detected...")
+            config_helper.save_setting("testkey", "testvalue")
+            config_helper.save_setting("testkey", "testvaluee")
+            config_helper.save_setting("testkey2", "testvalue2")
+            config_helper.save_setting("testkey3", "testvalue3")
+            config_helper.save_setting("testkey4", "testvalue4")
+            print(config_helper.get_settings())
+            print(config_helper.get_setting("testkey2"))
         elif len(input_value.split(" ")) > 1:
             self.plugin_helper.execute(input_value)
         else:
@@ -39,7 +55,7 @@ class InputHandler():
             print("Unknown command " + input_value + "!")
 
     @staticmethod
-    def _get_helptext(main):
+    def _get_helptext():
         helptext = ""
 
         helptext += " =============== start of the helptext =============== \n"
@@ -51,7 +67,7 @@ class InputHandler():
         helptext += "stop --> Exits the cli\n"
         helptext += "exit --> Exits the cli\n"
         helptext += " --------------- main options    --------------- \n"
-        helptext += "logs --> Enables/disables logging (current: " + str(main.logging) + ")\n"
+        helptext += "logs --> Enables/disables logging (current: " + str(config_helper.get_setting("logging")) + ")\n"
         helptext += " --------------- debug commands  --------------- \n"
         helptext += "plugins --> Shows all loaded plugins\n"
         helptext += " --------------- plugin commands --------------- \n"

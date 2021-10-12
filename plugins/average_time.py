@@ -1,6 +1,7 @@
 from datetime import datetime
 from time import sleep
 
+import helpers.config_helper as config_helper
 from plugins.info_module_base import InfoModuleBase
 from plugins.better_thread import BetterThread
 
@@ -31,7 +32,7 @@ class AverageTime(InfoModuleBase):
 
         timeNow = datetime.now()
 
-        with open("D:\AverageActiveTime\logfile.txt", "a+") as logfile:
+        with open(config_helper.get_setting("path") + "timefile.txt", "a+") as logfile:
             log_text = []
             log_text.append("[" + str(timeNow).split(" ")[0] + "|STARTUP] " + str(timeNow).split(" ")[1] + "\n")
             log_text.append("[" + str(timeNow).split(" ")[0] + "|SHUTOFF] " + str(timeNow).split(" ")[1] + "\n")
@@ -69,10 +70,10 @@ class AverageTime(InfoModuleBase):
     def update_function(self):
         timeNow = datetime.now()
 
-        with open("D:\AverageActiveTime\logfile.txt", "r") as logfile:
+        with open(config_helper.get_setting("path") + "timefile.txt", "r") as logfile:
             lines = logfile.readlines()
 
-        with open("D:\AverageActiveTime\logfile.txt", "w") as logfile:
+        with open(config_helper.get_setting("path") + "timefile.txt", "w") as logfile:
             lines[-1] = "[" + str(timeNow).split(" ")[0] + "|SHUTOFF] " + str(timeNow).split(" ")[1] + "\n"
 
             logfile.writelines(lines)
