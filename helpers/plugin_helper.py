@@ -63,10 +63,11 @@ class PluginHelper():
     def execute(self, command):
         pluginname = command.split(" ")[0]
 
-        if command.split(" ")[1] == "help":
+        if command.split(" ")[0] == "help" or command.split(" ")[1] == "help":
             for plugin in self.plugin_list:
                 if plugin.inst.get_pluginname() == pluginname:
-                    return plugin.inst.get_info()
+                    print(plugin.inst.get_info())
+                    return
             return None
 
         for plugin in self.plugin_list:

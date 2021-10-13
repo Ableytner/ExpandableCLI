@@ -11,7 +11,7 @@ class BetterThread(Thread, InfoModuleBase):
         return "better_thread"
 
     def get_info(self):
-        return super().get_info()
+        return "This plugin has no commands"
 
     def start(self) -> None:
         return super().start()

@@ -1,1 +1,1 @@
-python main.py
+python C:\Users\emanu\source\repos\ExpandableCLI\main.py

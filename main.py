@@ -1,3 +1,6 @@
+# @author Emanuel Ableitners
+# github: https://github.com/EmanuelAbleitner
+
 from time import sleep
 from threading import Thread
 

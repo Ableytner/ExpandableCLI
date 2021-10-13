@@ -22,3 +22,19 @@ def save_setting(key, value):
     settings[key] = value
     with open(filepath, "w") as settingsfile:
         json.dump(settings, settingsfile)
+
+# init path into config
+try:
+    with open(filepath, "r+") as settingsfile:
+        settings = json.load(settingsfile)
+    if settings == None:
+        settings = {}
+except:
+    with open(filepath, "w+"):
+        pass
+    settings = {}
+
+settings["path"] = filepath
+
+with open(filepath, "w") as settingsfile:
+    json.dump(settings, settingsfile)
