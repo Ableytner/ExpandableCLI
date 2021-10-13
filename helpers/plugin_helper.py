@@ -2,9 +2,10 @@ from dataclasses import dataclass
 from types import MethodType
 from typing import List
 
-from plugins.better_thread import BetterThread
 from plugins.info_module_base import InfoModuleBase
+from plugins.better_thread import BetterThread
 from plugins.average_time import AverageTime
+from plugins.keycounter import KeyCounter
 
 @dataclass
 class Plugin:
@@ -19,7 +20,7 @@ class Plugin:
 
 class PluginHelper():
     def __init__(self) -> None:
-        self.plugins = [BetterThread, AverageTime]
+        self.plugins = [BetterThread, AverageTime, KeyCounter]
         self.plugin_list: List[Plugin] = []
 
     def init_plugins(self):
