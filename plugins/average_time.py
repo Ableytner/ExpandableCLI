@@ -33,9 +33,15 @@ class AverageTime(InfoModuleBase):
         timeNow = datetime.now()
 
         with open(config_helper.get_setting("path") + "timefile.txt", "a+") as logfile:
-            log_text = []
-            log_text.append("[" + str(timeNow).split(" ")[0] + "|STARTUP] " + str(timeNow).split(" ")[1] + "\n")
-            log_text.append("[" + str(timeNow).split(" ")[0] + "|SHUTOFF] " + str(timeNow).split(" ")[1] + "\n")
+            log_text = ""
+            #log_text.append("[" + str(timeNow).split(" ")[0] + "|STARTUP] " + str(timeNow).split(" ")[1] + "\n")
+            #log_text.append("[" + str(timeNow).split(" ")[0] + "|SHUTOFF] " + str(timeNow).split(" ")[1] + "\n")
+            log_text += "[" + str(timeNow).replace(" ", "|").split(".")[0]
+            log_text += "|STARTUP]\n"
+
+            log_text += "[" + str(timeNow).replace(" ", "|").split(".")[0]
+            log_text += "|SHUTOFF]\n"
+
             logfile.writelines(log_text)
 
         self.update_thread.start()
@@ -74,6 +80,6 @@ class AverageTime(InfoModuleBase):
             lines = logfile.readlines()
 
         with open(config_helper.get_setting("path") + "timefile.txt", "w") as logfile:
-            lines[-1] = "[" + str(timeNow).split(" ")[0] + "|SHUTOFF] " + str(timeNow).split(" ")[1] + "\n"
+            lines[-1] = "[" + str(timeNow).replace(" ", "|").split(".")[0] + "|SHUTOFF]\n"
 
             logfile.writelines(lines)

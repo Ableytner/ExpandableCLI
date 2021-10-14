@@ -31,6 +31,7 @@ class KeyCounter(InfoModuleBase):
         helptext += "Showing help for the keycounter plugin:\n"
         helptext += f"list --> Shows the top {config_helper.get_setting('keycounter.count')} pressed keys\n"
         helptext += "list-all --> Shows all pressed keys, sorted by the amount of times pressed"
+        helptext += "count [n] --> Changes the amount of keys displayed by 'list'"
 
         return helptext
 
@@ -45,6 +46,12 @@ class KeyCounter(InfoModuleBase):
             self.print_n(config_helper.get_setting("keycounter.count"))
         elif command == "list-all":
             self.print_all()
+        elif command.split(" ")[0] == "count":
+            try:
+                count_value = int(command.split(" ")[1])
+                config_helper.save_setting("keycounter.count", count_value)
+            except:
+                print(f"Unknown value {command.split(' ')[1::]}")
         else:
             print("Unknown command " + command + "!")
 

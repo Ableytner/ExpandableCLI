@@ -2,7 +2,6 @@
 # github: https://github.com/EmanuelAbleitner
 
 from time import sleep
-from threading import Thread
 
 import helpers.config_helper as config_helper
 from core.logging import log, LoggingType
@@ -11,14 +10,12 @@ from helpers.window_helper import WindowHelper
 from helpers.cli_helper import CLIHelper
 
 class Main():
-    def __init__(self, path = "D:\AverageActiveTime\\") -> None:
-        self.window_helper = WindowHelper(path)
+    def __init__(self) -> None:
+        self.window_helper = WindowHelper()
         self.plugin_helper = PluginHelper()
         self.cli_helper = CLIHelper(self.plugin_helper)
 
         self.cli_thread = None
-
-        config_helper.save_setting("path", path)
 
         try:
             config_helper.get_setting("logging")
@@ -30,7 +27,7 @@ class Main():
     def main(self):
         if not self.window_helper.background_program_running():
             print("Running instance detected, exiting...")
-            sleep(3)
+            sleep(1.5)
             exit()
 
         self.plugin_helper.init_plugins()

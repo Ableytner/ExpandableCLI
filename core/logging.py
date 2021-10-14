@@ -16,8 +16,9 @@ def log(file, logging_type: LoggingType, message):
     #if not os.path.isfile(config_helper.get_setting("path") + "logfile.txt"):
         #with open(config_helper.get_setting("path") + "logfile.txt", "w+") as f:
             #pass
+    now = datetime.now()
     log_text = "["
-    log_text += str(datetime.now().hour) + ":" + str(datetime.now().minute) + ":" + str(datetime.now().second) + ":" + str(datetime.now().microsecond) + "|"
+    log_text += str(now).replace(" ", "|") + "|"
     log_text += file.split("\\")[-1].split(".")[0] + "|"
     log_text += logging_type.value + "] "
     log_text += message + "\n"

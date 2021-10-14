@@ -73,7 +73,7 @@ class PluginHelper():
 
         for plugin in self.plugin_list:
             if plugin.inst.get_pluginname() == pluginname:
-                return plugin.inst.execute(command.split(" ")[1])
+                return plugin.inst.execute(str(command.split(" ")[1::]))
 
         print("Plugin " + pluginname + " can't be found!")
         return None
