@@ -3,26 +3,27 @@
 
 from time import sleep
 
-import helpers.config_helper as config_helper
 from core.logging import log, LoggingType
+
+import helpers.config_helper as config_helper
 from helpers.plugin_helper import PluginHelper
 from helpers.window_helper import WindowHelper
 from helpers.cli_helper import CLIHelper
 
 class Main():
     def __init__(self) -> None:
+        try:
+            log(__file__, LoggingType.info, "Successfully read setting logging as " + str(config_helper.get_setting("logging")))
+        except:
+            config_helper.save_setting("logging", False)
+            log(__file__, LoggingType.warning, "Saved new setting logging as " + str(config_helper.get_setting("logging")))
+
         self.window_helper = WindowHelper()
         self.plugin_helper = PluginHelper()
         self.cli_helper = CLIHelper(self.plugin_helper)
+        log(__file__, LoggingType.info, "Successfully initialized helpers")
 
         self.cli_thread = None
-
-        try:
-            config_helper.get_setting("logging")
-        except:
-            config_helper.save_setting("logging", False)
-
-        log(__file__, LoggingType.info, "Test")
 
     def main(self):
         if not self.window_helper.background_program_running():

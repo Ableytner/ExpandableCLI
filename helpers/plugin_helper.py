@@ -1,11 +1,34 @@
+import sys
+import os.path
 from dataclasses import dataclass
 from types import MethodType
 from typing import List
 
 from plugins.info_module_base import InfoModuleBase
-from plugins.better_thread import BetterThread
-from plugins.average_time import AverageTime
-from plugins.keycounter import KeyCounter
+
+sys.path.insert(1, __file__.rsplit("\\", 2)[0] + "\plugins")
+
+modulepaths = []
+for file in os.listdir(__file__.rsplit("\\", 2)[0] + "\plugins"):
+    if file.startswith("_") or file == "info_module_base.py":
+        pass
+    else:
+        modulepaths.append(file)
+
+classnames = []
+for file in modulepaths:
+    with open(__file__.rsplit("\\", 2)[0] + "\plugins\\" + file, "r") as f:
+        for line in f.readlines():
+            if "class" in line:
+                classnames.append(line.split("class ")[1].split("(")[0])
+
+plugins = []
+for c in range(len(modulepaths)):
+    module = __import__(modulepaths[c].split(".")[0])
+    plugins.append(getattr(module, classnames[c]))
+
+del(modulepaths)
+del(classnames)
 
 @dataclass
 class Plugin:
@@ -20,11 +43,10 @@ class Plugin:
 
 class PluginHelper():
     def __init__(self) -> None:
-        self.plugins = [BetterThread, AverageTime, KeyCounter]
         self.plugin_list: List[Plugin] = []
 
     def init_plugins(self):
-        for plugin in self.plugins:
+        for plugin in plugins:
             self._init(plugin)
 
     def start_plugins(self):
@@ -73,7 +95,7 @@ class PluginHelper():
 
         for plugin in self.plugin_list:
             if plugin.inst.get_pluginname() == pluginname:
-                return plugin.inst.execute(str(command.split(" ")[1::]))
+                return plugin.inst.execute(command.split(" ", maxsplit=1)[1])
 
         print("Plugin " + pluginname + " can't be found!")
         return None

@@ -25,5 +25,4 @@ def log(file, logging_type: LoggingType, message):
 
     with open(config_helper.get_setting("path") + "logfile.txt", "a+") as f:
         f.write(log_text)
-    print (log_text)
-    #print(file.split("\\")[-1].split(".")[0], logging_type.value, message)
+    #print (log_text)

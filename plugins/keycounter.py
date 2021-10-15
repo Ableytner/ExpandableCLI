@@ -30,7 +30,7 @@ class KeyCounter(InfoModuleBase):
 
         helptext += "Showing help for the keycounter plugin:\n"
         helptext += f"list --> Shows the top {config_helper.get_setting('keycounter.count')} pressed keys\n"
-        helptext += "list-all --> Shows all pressed keys, sorted by the amount of times pressed"
+        helptext += "list-all --> Shows all pressed keys, sorted by the amount of times pressed\n"
         helptext += "count [n] --> Changes the amount of keys displayed by 'list'"
 
         return helptext
