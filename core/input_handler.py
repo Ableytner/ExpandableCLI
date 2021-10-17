@@ -1,14 +1,17 @@
 import os
 from time import sleep
 
+from core.logging import log, LoggingType
 import helpers.config_helper as config_helper
 from helpers.window_helper import WindowHelper
+from helpers.plugin_helper import PluginHelper
 
 class InputHandler():
-    def __init__(self, plugin_helper) -> None:
+    def __init__(self, plugin_helper: PluginHelper) -> None:
         self.plugin_helper = plugin_helper
 
     def handle_input(self, input_value):
+        log(__file__, LoggingType.info, "Processing command " + input_value)
         if input_value == "help":
             print(self._get_helptext())
         elif input_value == "hide":
@@ -23,28 +26,30 @@ class InputHandler():
             print("Exiting program...")
             self.plugin_helper.exit_plugins()
             exit()
+        elif input_value.split(" ")[0] == "disable":
+            pluginname = input_value.split(" ")[1]
+            log(__file__, LoggingType.info, "Disabling plugin " + pluginname)
+            self.plugin_helper.disable_plugin(pluginname)
+            log(__file__, LoggingType.info, "Disabling plugin " + pluginname)
+        elif input_value.split(" ")[0] == "enable":
+            pluginname = input_value.split(" ")[1]
+            log(__file__, LoggingType.info, "Enabling plugin " + pluginname)
+            self.plugin_helper.enable_plugin(pluginname)
+            log(__file__, LoggingType.info, "Enabling plugin " + pluginname)
         elif input_value == "logs":
             try:
                 logging_state = config_helper.get_setting("logging")
                 if logging_state == True or logging_state == False:
                     config_helper.save_setting("logging", not logging_state)
+                    #log(__file__, LoggingType.info, "Toggled logging to " + str(config_helper.get_setting("logging")) + "!", True)
+                    print("Toggled logging to " + str(config_helper.get_setting("logging")) + "!")
             except Exception as e:
-                print("An error occured during reading the config: ", e)
-            finally:
-                print("Toggled logging to " + str(config_helper.get_setting("logging")) + "!")
+                log(__file__, LoggingType.error, "An error occured during reading the config: " + str(e))
+                print("An error occured during reading the config: " + str(e))
         elif input_value == "plugins":
-            print("Printing " + str(len(self.plugin_helper.plugin_list)) + " installed plugins:")
+            log(__file__, LoggingType.info, "Printing " + str(len(self.plugin_helper.plugin_list)) + " installed plugins:", True)
             for plugin in self.plugin_helper.plugin_list:
-                print(plugin.inst.get_pluginname())
-        elif input_value == "test":
-            print("Test detected...")
-            config_helper.save_setting("testkey", "testvalue")
-            config_helper.save_setting("testkey", "testvaluee")
-            config_helper.save_setting("testkey2", "testvalue2")
-            config_helper.save_setting("testkey3", "testvalue3")
-            config_helper.save_setting("testkey4", "testvalue4")
-            print(config_helper.get_settings())
-            print(config_helper.get_setting("testkey2"))
+                log(__file__, LoggingType.info, plugin.inst.get_pluginname(), True)
         elif len(input_value.split(" ")) > 1:
             self.plugin_helper.execute(input_value)
         else:
@@ -52,7 +57,7 @@ class InputHandler():
                 if input_value == plugin.inst.get_pluginname():
                     print(plugin.inst.get_info())
                     return
-            print("Unknown command " + input_value + "!")
+            log(__file__, LoggingType.info, "Unknown command " + input_value + "!", True)
 
     @staticmethod
     def _get_helptext():
@@ -66,6 +71,8 @@ class InputHandler():
         helptext += "clear --> Clears the console window\n"
         helptext += "stop --> Exits the cli\n"
         helptext += "exit --> Exits the cli\n"
+        helptext += "disable [plugin_name] --> Disable the given plugin\n"
+        helptext += "enable [plugin_name] --> Enable the given plugin\n"
         helptext += " --------------- main options    --------------- \n"
         helptext += "logs --> Enables/disables logging (current: " + str(config_helper.get_setting("logging")) + ")\n"
         helptext += " --------------- debug commands  --------------- \n"

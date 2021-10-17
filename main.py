@@ -1,6 +1,7 @@
 # @author Emanuel Ableitners
 # github: https://github.com/EmanuelAbleitner
 
+from sys import argv
 from time import sleep
 
 from core.logging import log, LoggingType
@@ -28,14 +29,23 @@ class Main():
     def main(self):
         if not self.window_helper.background_program_running():
             print("Running instance detected, exiting...")
+            log(__file__, LoggingType.info, "Running instance detected, exiting...")
             sleep(1.5)
             exit()
 
         self.plugin_helper.init_plugins()
         self.plugin_helper.check_comp()
-        self.plugin_helper.start_plugins()
+        if "--hide" in argv:
+            self.window_helper.hide_cli()
+        else:
+            self.plugin_helper.start_plugins()
+        log(__file__, LoggingType.info, "Plugin loading finished successfully")
 
+        log(__file__, LoggingType.info, "Starting cli_helper...")
         self.cli_helper.start()
+        log(__file__, LoggingType.info, "Success")
+
+        log(__file__, LoggingType.info, "Startup finished successfully")
 
     def format_to_seconds(self, time):
         return float(time[0]) * 3600 + float(time[1]) * 60 + float(time[2])

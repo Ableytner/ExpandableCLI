@@ -1,6 +1,3 @@
-from time import sleep
-from threading import Thread
-
 from core.input_handler import InputHandler
 from plugins.better_thread import BetterThread
 

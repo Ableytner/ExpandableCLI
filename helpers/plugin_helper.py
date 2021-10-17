@@ -4,13 +4,14 @@ from dataclasses import dataclass
 from types import MethodType
 from typing import List
 
+from core.logging import log, LoggingType
 from plugins.info_module_base import InfoModuleBase
 
 sys.path.insert(1, __file__.rsplit("\\", 2)[0] + "\plugins")
 
 modulepaths = []
 for file in os.listdir(__file__.rsplit("\\", 2)[0] + "\plugins"):
-    if file.startswith("_") or file == "info_module_base.py":
+    if file.startswith("_") or file.endswith(".py.dis") or file == "info_module_base.py":
         pass
     else:
         modulepaths.append(file)
@@ -51,7 +52,7 @@ class PluginHelper():
 
     def start_plugins(self):
         for plugin in self.plugin_list:
-            plugin.inst.start()
+            self._start(plugin)
 
     def exit_plugins(self):
         for plugin in self.plugin_list:
@@ -65,23 +66,19 @@ class PluginHelper():
                     if plugin_to_check_with.inst.get_pluginname() == item:
                         compatable = True
                 if not compatable:
-                    print("Critical error: Plugin " + plugin_to_check.inst.get_pluginname() + " depends on plugins " + str(plugin_to_check.inst.depends_on()) + "!")
+                    log(__file__, LoggingType.critical, "Critical error: Plugin " + plugin_to_check.inst.get_pluginname() + " depends on plugins " + str(plugin_to_check.inst.depends_on()) + "!", True)
                     exit()
-
-    def needs_startup(self):
-        for plugin in self.plugin_list:
-            if plugin.needs_startup:
-                return True
-        return False
-
-    def start_startup_plugins(self):
-        for plugin in self.plugin_list:
-            if plugin.needs_startup:
-                plugin.inst.start()
+        log(__file__, LoggingType.info, "Successfully finished plugin compatibility check")
 
     def _init(self, plugin_class: InfoModuleBase):
         plugin = Plugin(plugin_class(), plugin_class.get_pluginname, plugin_class.depends_on, plugin_class.get_info, plugin_class.start, plugin_class.execute, plugin_class.exit, plugin_class.needs_startup)
         self.plugin_list.append(plugin)
+        log(__file__, LoggingType.info, "Successfully initialized plugin " + plugin.inst.get_pluginname())
+
+    def _start(self, plugin):
+        if plugin.needs_startup:
+            plugin.inst.start()
+            log(__file__, LoggingType.info, "Successfully started plugin " + plugin.inst.get_pluginname())
 
     def execute(self, command):
         pluginname = command.split(" ")[0]
@@ -99,3 +96,23 @@ class PluginHelper():
 
         print("Plugin " + pluginname + " can't be found!")
         return None
+
+    def disable_plugin(self, plugin_name):
+        plugindir = __file__.rsplit("\\", 2)[0] + "\plugins"
+        for file in os.listdir(plugindir):
+            if file == plugin_name + ".py.dis":
+                return
+            if file == plugin_name + ".py":
+                os.rename(plugindir + "\\" + plugin_name + ".py", plugindir + "\\" + plugin_name + ".py.dis")
+                return
+        print("Plugin " + plugin_name + " can't be found!")
+
+    def enable_plugin(self, plugin_name):
+        plugindir = __file__.rsplit("\\", 2)[0] + "\plugins"
+        for file in os.listdir(plugindir):
+            if file == plugin_name + ".py":
+                return
+            if file == plugin_name + ".py.dis":
+                os.rename(plugindir + "\\" + plugin_name + ".py.dis", plugindir + "\\" + plugin_name + ".py")
+                return
+        print("Plugin " + plugin_name + " can't be found!")
