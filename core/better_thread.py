@@ -1,17 +1,9 @@
 from threading import Thread, Event
 
-from plugins.info_module_base import InfoModuleBase
-
-class BetterThread(Thread, InfoModuleBase):
+class BetterThread(Thread):
     def __init__(self, *args, **kwargs):
         self._stop = Event()
         super(BetterThread, self).__init__(*args, **kwargs)
-
-    def get_pluginname(self):
-        return "better_thread"
-
-    def get_info(self):
-        return "This plugin has no commands"
 
     def start(self) -> None:
         return super().start()

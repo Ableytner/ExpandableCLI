@@ -1,10 +1,11 @@
 from core.input_handler import InputHandler
-from plugins.better_thread import BetterThread
+from core.better_thread import BetterThread
 
 class CLIHelper():
     def __init__(self, plugin_helper) -> None:
-        self.input_handler = InputHandler(plugin_helper)
+        self.input_handler = InputHandler(plugin_helper, self)
         self.exit = False
+        self.cli_thread = None
 
     def start(self):
         self.cli_thread = BetterThread(target=self.cli_function)
@@ -14,4 +15,5 @@ class CLIHelper():
     def cli_function(self):
         while not self.exit:
             input_value = input("> ")
+            # pas the read input to the input handler
             self.input_handler.handle_input(input_value.strip(" "))

@@ -13,56 +13,46 @@ from helpers.cli_helper import CLIHelper
 
 class Main():
     def __init__(self) -> None:
+        # read setting for logging
+        # this needs to be executed at the very start because else it will crash at log(...)
         try:
-            log(__file__, LoggingType.info, "Successfully read setting logging as " + str(config_helper.get_setting("logging")))
+            log(__file__, "Successfully read setting logging as " + str(config_helper.get_setting("logging")))
         except:
+            # if the config doesn't contain the logging setting, save it as False
             config_helper.save_setting("logging", False)
-            log(__file__, LoggingType.warning, "Saved new setting logging as " + str(config_helper.get_setting("logging")))
+            log(__file__, "Saved new setting logging as " + str(config_helper.get_setting("logging")), LoggingType.warning)
 
+        # instantiate the helpers
         self.window_helper = WindowHelper()
         self.plugin_helper = PluginHelper()
         self.cli_helper = CLIHelper(self.plugin_helper)
-        log(__file__, LoggingType.info, "Successfully initialized helpers")
+        log(__file__, "Successfully initialized helpers")
 
         self.cli_thread = None
 
     def main(self):
-        if not self.window_helper.background_program_running():
-            print("Running instance detected, exiting...")
-            log(__file__, LoggingType.info, "Running instance detected, exiting...")
+        if self.window_helper.background_program_running():
+            # if a running instance has been detected, this instance will exit
+            log(__file__, "Running instance detected, exiting...", printout=True)
             sleep(1.5)
             exit()
 
+        # manage plugins
         self.plugin_helper.init_plugins()
         self.plugin_helper.check_comp()
+        self.plugin_helper.startup_plugins()
+        log(__file__, "Plugin loading finished successfully")
+
+        # hide program if flag --hide is set
         if "--hide" in argv:
             self.window_helper.hide_cli()
-        else:
-            self.plugin_helper.start_plugins()
-        log(__file__, LoggingType.info, "Plugin loading finished successfully")
 
-        log(__file__, LoggingType.info, "Starting cli_helper...")
+        # starts the cli thread listening for console inputs
+        log(__file__, "Starting cli_helper...")
         self.cli_helper.start()
-        log(__file__, LoggingType.info, "Success")
+        log(__file__, "Success")
 
-        log(__file__, LoggingType.info, "Startup finished successfully")
-
-    def format_to_seconds(self, time):
-        return float(time[0]) * 3600 + float(time[1]) * 60 + float(time[2])
-
-    def format_to_time(self, seconds):
-        minutes = 0
-        hours = 0
-
-        while seconds >= 60:
-            seconds -= 60
-            minutes += 1
-
-        while minutes >= 60:
-            minutes -= 60
-            hours += 1
-
-        return [hours, minutes, seconds]
+        log(__file__, "Startup finished successfully")
 
 if __name__ == "__main__":
     Main().main()

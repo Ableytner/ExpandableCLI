@@ -1,6 +1,9 @@
 from abc import ABC, abstractmethod
 
-class InfoModuleBase(ABC):
+class BasePlugin(ABC):
+    def __init__(self) -> None:
+        self._started = False
+
     @abstractmethod
     def get_pluginname(self):
         pass
@@ -17,7 +20,7 @@ class InfoModuleBase(ABC):
 
     @abstractmethod
     def start(self):
-        pass
+        self._started = True
 
     @abstractmethod
     def execute(self, command):
