@@ -22,7 +22,8 @@ class AverageTime(BasePlugin):
 
         helptext += "Showing help for the average_time plugin:\n"
         helptext += "average --> Calculates the average active time\n"
-        helptext += "today --> Calculates the total time today"
+        helptext += "today --> Calculates the total time today\n"
+        helptext += "session --> Calculates the current session time"
 
         return helptext
 
@@ -31,16 +32,16 @@ class AverageTime(BasePlugin):
 
         self.update_thread = BetterThread(target=self.update_controller)
 
-        timeNow = datetime.now()
+        timeNow = datetime.now().timestamp()
 
         with open(config_helper.get_setting("path") + "timefile.txt", "a+") as logfile:
             log_text = ""
-            #log_text.append("[" + str(timeNow).split(" ")[0] + "|STARTUP] " + str(timeNow).split(" ")[1] + "\n")
-            #log_text.append("[" + str(timeNow).split(" ")[0] + "|SHUTOFF] " + str(timeNow).split(" ")[1] + "\n")
-            log_text += "[" + str(timeNow).replace(" ", "|").split(".")[0]
+            # log_text += "[" + str(timeNow).replace(" ", "|").split(".")[0]
+            log_text += "[" + str(int(timeNow))
             log_text += "|STARTUP]\n"
 
-            log_text += "[" + str(timeNow).replace(" ", "|").split(".")[0]
+            # log_text += "[" + str(timeNow).replace(" ", "|").split(".")[0]
+            log_text += "[" + str(int(timeNow))
             log_text += "|SHUTOFF]\n"
 
             logfile.writelines(log_text)
@@ -53,6 +54,8 @@ class AverageTime(BasePlugin):
             return self._calculate_average()
         elif command == "today":
             return self._calculate_today()
+        elif command == "session":
+            return self._calculate_session()
         else:
             print("Unknown command " + command + "!")
 
@@ -64,10 +67,32 @@ class AverageTime(BasePlugin):
         print("update_thread gracefully stopped")
 
     def _calculate_average(self):
+        timeint = int(datetime.now().timestamp())
+        print(timeint)
+        print(datetime.fromtimestamp(timeint))
+
         print("calculate_average isn't yet implemented!")
 
     def _calculate_today(self):
-        print("calculate_today isn't yet implemented!")
+        with open(config_helper.get_setting("path") + "timefile.txt", "r") as logfile:
+            lines = logfile.readlines()
+        starttimeint = int(lines[-2][1:-1:].split("|")[0])
+        stoptimeint = int(lines[-1][1:-1:].split("|")[0])
+
+        start_datetime = datetime.fromtimestamp(starttimeint)
+        stop_datetime = datetime.fromtimestamp(stoptimeint)
+        if start_datetime.date() != stop_datetime.date():
+            print("Today this computer has been running for " + str(stop_datetime.time()) + "!")
+        else:
+            print("Today this computer has been running for " + str(stop_datetime - start_datetime) + "!")
+
+    def _calculate_session(self):
+        with open(config_helper.get_setting("path") + "timefile.txt", "r") as logfile:
+            lines = logfile.readlines()
+        starttimeint = int(lines[-2][1:-1:].split("|")[0])
+        stoptimeint = int(lines[-1][1:-1:].split("|")[0])
+        sessiontime = datetime.fromtimestamp(stoptimeint) - datetime.fromtimestamp(starttimeint)
+        print("This computer has been running for " + str(sessiontime) + "!")
 
     def update_controller(self):
         while True:
@@ -78,13 +103,14 @@ class AverageTime(BasePlugin):
             sleep(5)
 
     def update_function(self):
-        timeNow = datetime.now()
+        timeNow = datetime.now().timestamp()
 
         with open(config_helper.get_setting("path") + "timefile.txt", "r") as logfile:
             lines = logfile.readlines()
 
         with open(config_helper.get_setting("path") + "timefile.txt", "w") as logfile:
-            lines[-1] = "[" + str(timeNow).replace(" ", "|").split(".")[0] + "|SHUTOFF]\n"
+            lines[-1] = "[" + str(int(timeNow)) + "|SHUTOFF]\n"
+            # lines[-1] = "[" + str(timeNow).replace(" ", "|").split(".")[0] + "|SHUTOFF]\n"
 
             logfile.writelines(lines)
 
