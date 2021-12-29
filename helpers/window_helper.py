@@ -1,5 +1,6 @@
 from os import system, name, path
 import psutil
+import win32gui
 
 from ctypes import windll, WinDLL
 
@@ -36,6 +37,7 @@ class WindowHelper():
             with open(config_helper.get_setting("path") + "hWndfile.txt", "r+") as hWndfile:
                 hWnd = int(hWndfile.readline())
                 self.show_cli(hWnd)
+                win32gui.SetForegroundWindow(hWnd)
                 return True
 
         # if no running instance is discovered
